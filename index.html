@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Two-Period Mortgage Calculator</title>
+    <style>
+        body { font-family: sans-serif; max-width: 400px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        input { width: 100%; margin-bottom: 10px; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; }
+        .result { margin-top: 20px; padding: 10px; background: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h2>Mortgage Calculator</h2>
+    <label>Loan Amount ($)</label>
+    <input type="number" id="principal" value="300000">
+    
+    <label>Total Term (Years)</label>
+    <input type="number" id="totalYears" value="30">
+
+    <hr>
+    <label>Period 1: Years</label>
+    <input type="number" id="p1Years" value="5">
+    <label>Period 1: Interest Rate (%)</label>
+    <input type="number" id="p1Rate" value="4.5" step="0.1">
+
+    <hr>
+    <label>Period 2: Interest Rate (%)</label>
+    <input type="number" id="p2Rate" value="6.5" step="0.1">
+
+    <button onclick="calculate()">Calculate Payments</button>
+
+    <div id="results" class="result" style="display:none;">
+        <p><strong>Period 1 Payment:</strong> $<span id="m1"></span></p>
+        <p><strong>Period 2 Payment:</strong> $<span id="m2"></span></p>
+    </div>
+
+    <script>
+        function calculate() {
+            const P = parseFloat(document.getElementById('principal').value);
+            const totalMonths = parseFloat(document.getElementById('totalYears').value) * 12;
+            const p1Months = parseFloat(document.getElementById('p1Years').value) * 12;
+            const r1 = parseFloat(document.getElementById('p1Rate').value) / 100 / 12;
+            const r2 = parseFloat(document.getElementById('p2Rate').value) / 100 / 12;
+
+            // Period 1 Payment
+            const m1 = P * (r1 * Math.pow(1 + r1, totalMonths)) / (Math.pow(1 + r1, totalMonths) - 1);
+            
+            // Balance after Period 1
+            const balance = P * (Math.pow(1 + r1, totalMonths) - Math.pow(1 + r1, p1Months)) / (Math.pow(1 + r1, totalMonths) - 1);
+            
+            // Period 2 Payment (on remaining months)
+            const remainingMonths = totalMonths - p1Months;
+            const m2 = balance * (r2 * Math.pow(1 + r2, remainingMonths)) / (Math.pow(1 + r2, remainingMonths) - 1);
+
+            document.getElementById('m1').innerText = m1.toFixed(2);
+            document.getElementById('m2').innerText = m2.toFixed(2);
+            document.getElementById('results').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
